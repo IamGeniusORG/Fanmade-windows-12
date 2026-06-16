@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/e/e6/Windows_11_logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Windows 12 Fanmade</title>
+    <!-- Use authentic fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <!-- Boot Screen -->
+    <div id="boot-screen" class="boot-screen">
+      <div class="boot-logo">
+        <div class="win-logo-grid">
+          <div class="win-square win-square-1"></div>
+          <div class="win-square win-square-2"></div>
+          <div class="win-square win-square-3"></div>
+          <div class="win-square win-square-4"></div>
+        </div>
+      </div>
+      <div class="boot-spinner"></div>
+    </div>
+
+    <!-- Desktop -->
+    <main id="desktop" class="desktop hidden">
+      <!-- Desktop Icons Container (Rendered by JS) -->
+      <div class="desktop-icons" id="desktop-icons"></div>
+
+      <!-- Windows Container -->
+      <div id="windows-container"></div>
+
+      <!-- Start Menu -->
+      <div id="start-menu" class="start-menu">
+        <div class="start-search">
+          <i class="fa-solid fa-search"></i>
+          <input type="text" placeholder="Type here to search apps, files, and settings">
+        </div>
+        
+        <div class="start-pinned">
+          <div class="start-pinned-header">
+            <h3>Pinned</h3>
+            <span>All apps <i class="fa-solid fa-chevron-right" style="font-size:10px;"></i></span>
+          </div>
+          <!-- Pinned Apps Container (Rendered by JS) -->
+          <div class="pinned-apps" id="pinned-apps"></div>
+        </div>
+
+        <div class="start-bottom">
+          <div class="user-profile">
+            <img class="user-avatar" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" alt="Admin">
+            <span>Admin</span>
+          </div>
+          <div class="power-btn" title="Power">
+            <i class="fa-solid fa-power-off"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taskbar -->
+      <div class="taskbar">
+        <div class="taskbar-left">
+          <div class="weather-widget">
+            <i class="fa-solid fa-cloud-sun" style="color:#ffb800; font-size:16px;"></i>
+            <span>72°F Sunny</span>
+          </div>
+        </div>
+
+        <div class="taskbar-center">
+          <div id="start-btn" class="taskbar-icon start-btn" title="Start">
+            <div class="win-logo-grid small">
+              <div class="win-square win-square-1"></div>
+              <div class="win-square win-square-2"></div>
+              <div class="win-square win-square-3"></div>
+              <div class="win-square win-square-4"></div>
+            </div>
+          </div>
+          <!-- Taskbar Icons Container (Rendered by JS) -->
+          <div id="taskbar-icons" style="display: flex; gap: 4px;"></div>
+        </div>
+
+        <div class="taskbar-right">
+          <div class="system-tray">
+            <i class="fa-solid fa-chevron-up tray-icon" title="Show hidden icons"></i>
+            <i class="fa-solid fa-wifi tray-icon" title="Internet access"></i>
+            <i class="fa-solid fa-volume-high tray-icon" title="Speakers"></i>
+            <i class="fa-solid fa-battery-full tray-icon" title="Battery"></i>
+          </div>
+          <div class="datetime">
+            <div id="time" class="time">10:00 AM</div>
+            <div id="date" class="date">10/24/2023</div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
