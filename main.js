@@ -36,15 +36,15 @@ else if (hwCores >= 8) cpuName = 'Intel(R) Core(TM) i7-10750H / AMD Ryzen 7 5800
 else if (hwCores >= 4) cpuName = 'Intel(R) Core(TM) i5-8300H / AMD Ryzen 3 3300X';
 
 // Extremely robust & accurate icons from Icons8 Fluency / Color
-const ICON_EXPLORER = 'https://img.icons8.com/color/48/mac-folder.png';
-const ICON_EDGE = 'https://ollama.com/public/icon-64x64.png';
-const ICON_STORE = 'https://img.icons8.com/color/48/windows-store.png';
+const ICON_EXPLORER = 'https://img.icons8.com/fluency/48/folder-invoices--v1.png';
+const ICON_EDGE = 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg';
+const ICON_STORE = 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Microsoft_Store_Icon_on_Windows_11.svg';
 const ICON_NOTEPAD = 'https://img.icons8.com/color/48/notepad.png';
 const ICON_PHOTOS = 'https://img.icons8.com/color/48/gallery.png';
 const ICON_SETTINGS = 'https://img.icons8.com/color/48/settings--v1.png';
 const ICON_TERMINAL = 'https://img.icons8.com/color/48/console.png';
 const ICON_CALCULATOR = 'https://img.icons8.com/color/48/calculator--v1.png';
-const ICON_TASKMANAGER = 'https://img.icons8.com/color/48/task-manager.png';
+const ICON_TASKMANAGER = 'https://img.icons8.com/fluency/48/task.png';
 
 
 const apps = {
@@ -96,7 +96,7 @@ const apps = {
     `
   },
   browser: {
-    title: 'Ollama Assistant',
+    title: 'AI Assistant',
     icon: ICON_EDGE,
     pinned: true, taskbar: true, desktop: true,
     render: () => `
@@ -104,7 +104,7 @@ const apps = {
          <div style="padding:20px; display:flex; align-items:center; gap:15px; border-bottom:1px solid var(--theme-border); background:var(--theme-bg-hover);">
             <img src="${ICON_EDGE}" style="width:32px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
             <div>
-               <h2 style="font-size:18px; margin:0; font-weight:600;">Ollama Assistant</h2>
+               <h2 style="font-size:18px; margin:0; font-weight:600;">AI Assistant</h2>
                <p style="margin:0; font-size:12px; opacity:0.6;">Running locally on your hardware</p>
             </div>
          </div>
@@ -112,12 +112,12 @@ const apps = {
             <div style="text-align:center; margin-top:10vh; opacity:0.8;">
                <img src="${ICON_EDGE}" style="width:80px; margin-bottom:15px; opacity:0.9;">
                <h1 style="font-size:24px; font-weight:500; margin-bottom:10px;">How can I help you today?</h1>
-               <p style="font-size:14px;">I'm your personal AI, powered entirely by your local Ollama instance.</p>
+               <p style="font-size:14px;">I'm your personal AI Assistant, powered by advanced AI models.</p>
             </div>
          </div>
          <div style="padding:15px 20px; background:var(--theme-bg); border-top:1px solid var(--theme-border);">
             <div style="display:flex; gap:10px; background:var(--theme-bg-hover); padding:5px 5px 5px 15px; border-radius:24px; border:1px solid var(--theme-border); align-items:center;">
-               <input type="text" id="edge-prompt-input" placeholder="Message Ollama..." style="flex:1; background:transparent; border:none; color:var(--theme-text); outline:none; font-size:14px;">
+               <input type="text" id="edge-prompt-input" placeholder="Message AI..." style="flex:1; background:transparent; border:none; color:var(--theme-text); outline:none; font-size:14px;">
                <button id="edge-send-btn" style="background:var(--accent); color:#fff; border:none; width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s;"><i class="fa-solid fa-arrow-up"></i></button>
             </div>
             <div style="text-align:center; font-size:11px; opacity:0.5; margin-top:8px;">AI generated content may be inaccurate</div>
@@ -129,13 +129,125 @@ const apps = {
     title: 'Microsoft Store',
     icon: ICON_STORE,
     pinned: true, taskbar: true, desktop: true,
-    render: () => `
-      <div style="padding: 40px; text-align: center; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--theme-bg);">
-        <img src="${ICON_STORE}" style="width: 80px; margin-bottom: 20px;">
-        <h2>Microsoft Store</h2>
-        <p style="opacity: 0.7; margin-top: 10px;">Discover the best apps, games, and entertainment.</p>
+    render: () => {
+      let libraryHtml = '';
+      Object.keys(apps).forEach(appId => {
+         const app = apps[appId];
+         libraryHtml += `
+            <div class="store-card">
+              <img src="${app.icon}" alt="${app.title}" style="object-fit:contain; background:transparent;">
+              <div class="store-card-title">${app.title}</div>
+              <div class="store-card-category">System App</div>
+              <div class="store-card-action"><span class="price">Installed</span><button style="background:var(--theme-hover); color:var(--theme-text);" onclick="openApp('${appId}')">Open</button></div>
+            </div>
+         `;
+      });
+      return `
+      <div class="store-app">
+        <div class="store-sidebar">
+          <div class="store-nav-item active" data-target="store-home"><i class="fa-solid fa-house"></i> Home</div>
+          <div class="store-nav-item" data-target="store-apps"><i class="fa-solid fa-layer-group"></i> Apps</div>
+          <div class="store-nav-item" data-target="store-gaming"><i class="fa-solid fa-gamepad"></i> Gaming</div>
+          <div class="store-nav-item" data-target="store-movies"><i class="fa-solid fa-film"></i> Movies & TV</div>
+          <div style="flex:1;"></div>
+          <div class="store-nav-item" data-target="store-library"><i class="fa-solid fa-book"></i> Library</div>
+          <div class="store-nav-item" data-target="store-settings"><i class="fa-solid fa-gear"></i> Settings</div>
+        </div>
+        <div class="store-content" style="position:relative;">
+          
+          <div id="store-home" class="store-page">
+            <div class="store-banner">
+              <div class="store-banner-content">
+                <h1>Essential Apps</h1>
+                <p>Everything you need to work, play, and create on your new PC.</p>
+                <button>Explore Collection</button>
+              </div>
+            </div>
+            
+            <div class="store-section-title">Featured</div>
+            <div class="store-grid">
+               <div class="store-card"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg" alt="VS Code"><div class="store-card-title">Visual Studio Code</div><div class="store-card-category">Developer Tools</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+               <div class="store-card"><img src="https://img.icons8.com/color/96/minecraft-logo.png" alt="Minecraft"><div class="store-card-title">Minecraft</div><div class="store-card-category">Action & Adventure</div><div class="store-card-action"><span class="price">$29.99</span><button>Buy</button></div></div>
+               <div class="store-card"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0c/Netflix_2015_N_logo.svg" alt="Netflix"><div class="store-card-title">Netflix</div><div class="store-card-category">Entertainment</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+            </div>
+          </div>
+
+          <div id="store-apps" class="store-page" style="display:none;">
+            <div class="store-section-title">Top free apps</div>
+            <div class="store-grid">
+              <div class="store-card"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg" alt="VS Code"><div class="store-card-title">Visual Studio Code</div><div class="store-card-category">Developer Tools</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"><div class="store-card-title">WhatsApp</div><div class="store-card-category">Social</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify"><div class="store-card-title">Spotify Music</div><div class="store-card-category">Music</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://img.icons8.com/fluency/96/tiktok.png" alt="TikTok"><div class="store-card-title">TikTok</div><div class="store-card-category">Entertainment</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg" alt="Figma"><div class="store-card-title">Figma</div><div class="store-card-category">Design</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://img.icons8.com/fluency/96/telegram-app.png" alt="Telegram"><div class="store-card-title">Telegram</div><div class="store-card-category">Social</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+            </div>
+          </div>
+
+          <div id="store-gaming" class="store-page" style="display:none;">
+            <div class="store-section-title">Top Games</div>
+            <div class="store-grid">
+              <div class="store-card"><img src="https://img.icons8.com/color/96/minecraft-logo.png" alt="Minecraft"><div class="store-card-title">Minecraft</div><div class="store-card-category">Action & Adventure</div><div class="store-card-action"><span class="price">$29.99</span><button>Buy</button></div></div>
+              <div class="store-card"><img src="https://img.icons8.com/color/96/xbox.png" alt="Xbox"><div class="store-card-title">Xbox</div><div class="store-card-category">Entertainment</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://img.icons8.com/color/96/steam.png" alt="Steam"><div class="store-card-title">Steam</div><div class="store-card-category">Gaming Hub</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://img.icons8.com/fluency/96/league-of-legends.png" alt="League of Legends"><div class="store-card-title">League of Legends</div><div class="store-card-category">MOBA</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://img.icons8.com/color/96/valorant.png" alt="Valorant"><div class="store-card-title">Valorant</div><div class="store-card-category">Shooter</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://img.icons8.com/fluency/96/epic-games.png" alt="Epic Games"><div class="store-card-title">Epic Games</div><div class="store-card-category">Gaming Hub</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+            </div>
+          </div>
+
+          <div id="store-movies" class="store-page" style="display:none;">
+            <div class="store-section-title">Movies & TV</div>
+            <div class="store-grid">
+              <div class="store-card"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg" style="object-fit:contain;" alt="Disney+"><div class="store-card-title">Disney+</div><div class="store-card-category">Entertainment</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://img.icons8.com/color/96/amazon-prime-video.png" alt="Prime Video"><div class="store-card-title">Amazon Prime Video</div><div class="store-card-category">Entertainment</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Hulu_Logo.svg" style="object-fit:contain;" alt="Hulu"><div class="store-card-title">Hulu</div><div class="store-card-category">Entertainment</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" style="object-fit:contain;" alt="YouTube"><div class="store-card-title">YouTube</div><div class="store-card-category">Entertainment</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://img.icons8.com/color/96/crunchyroll.png" alt="Crunchyroll"><div class="store-card-title">Crunchyroll</div><div class="store-card-category">Entertainment</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+              <div class="store-card"><img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Twitch_logo.svg" style="object-fit:contain;" alt="Twitch"><div class="store-card-title">Twitch</div><div class="store-card-category">Entertainment</div><div class="store-card-action"><span class="price">Free</span><button>Get</button></div></div>
+            </div>
+          </div>
+
+          <div id="store-library" class="store-page" style="display:none;">
+            <div class="store-section-title">Library</div>
+            <p style="opacity:0.7; margin-bottom:20px; font-size:14px;">Apps and games installed on your system.</p>
+            <div class="store-grid">
+               ${libraryHtml}
+            </div>
+          </div>
+
+          <div id="store-settings" class="store-page" style="display:none;">
+            <div class="store-section-title">Settings</div>
+            <div style="background:var(--theme-hover); border-radius:8px; padding:20px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+               <div>
+                  <div style="font-weight:600; margin-bottom:5px;">App updates</div>
+                  <div style="font-size:13px; opacity:0.7;">Update apps automatically so you don't have to.</div>
+               </div>
+               <div style="width:40px; height:20px; background:var(--accent); border-radius:10px; position:relative; cursor:pointer;">
+                  <div style="width:16px; height:16px; background:#fff; border-radius:50%; position:absolute; right:2px; top:2px;"></div>
+               </div>
+            </div>
+            <div style="background:var(--theme-hover); border-radius:8px; padding:20px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+               <div>
+                  <div style="font-weight:600; margin-bottom:5px;">Offline permissions</div>
+                  <div style="font-size:13px; opacity:0.7;">Make this PC the one I use to run some games or apps that have limited licenses.</div>
+               </div>
+               <div style="width:40px; height:20px; background:rgba(255,255,255,0.2); border-radius:10px; position:relative; cursor:pointer;">
+                  <div style="width:16px; height:16px; background:#fff; border-radius:50%; position:absolute; left:2px; top:2px;"></div>
+               </div>
+            </div>
+            <div style="background:var(--theme-hover); border-radius:8px; padding:20px; display:flex; justify-content:space-between; align-items:center;">
+               <div>
+                  <div style="font-weight:600; margin-bottom:5px;">About</div>
+                  <div style="font-size:13px; opacity:0.7;">Microsoft Store version 22305.1401.1.0</div>
+               </div>
+            </div>
+          </div>
+
+        </div>
       </div>
-    `
+      `;
+    }
   },
   notepad: {
     title: 'Notepad',
@@ -1088,3 +1200,201 @@ document.addEventListener('keydown', (e) => {
       }
    }
 });
+
+// --- System Tray & Task Manager Logic Additions ---
+
+// 1. Battery Percentage Logic
+if ('getBattery' in navigator) {
+  navigator.getBattery().then(function(battery) {
+    const updateBattery = () => {
+      const level = Math.round(battery.level * 100);
+      const textEl = document.getElementById('battery-text');
+      const iconEl = document.getElementById('battery-icon');
+      if(textEl) textEl.innerText = level + '%';
+      if(iconEl) {
+         if (battery.charging) {
+            iconEl.className = 'fa-solid fa-plug-circle-bolt';
+            iconEl.style.color = '#107c10';
+         } else {
+            if(level > 75) iconEl.className = 'fa-solid fa-battery-full';
+            else if(level > 50) iconEl.className = 'fa-solid fa-battery-three-quarters';
+            else if(level > 25) iconEl.className = 'fa-solid fa-battery-half';
+            else iconEl.className = 'fa-solid fa-battery-quarter';
+            iconEl.style.color = level <= 20 ? '#e81123' : '';
+         }
+      }
+    };
+    updateBattery();
+    battery.addEventListener('levelchange', updateBattery);
+    battery.addEventListener('chargingchange', updateBattery);
+  });
+}
+
+// 2. System Tray Flyouts
+const trayArrow = document.getElementById('tray-arrow');
+const openAppsFlyout = document.getElementById('open-apps-flyout');
+const openAppsList = document.getElementById('open-apps-list');
+const trayAudio = document.getElementById('tray-audio');
+const quickSettingsFlyout = document.getElementById('quick-settings-flyout');
+
+if (trayArrow) {
+   trayArrow.addEventListener('click', (e) => {
+      e.stopPropagation();
+      quickSettingsFlyout.classList.add('hidden');
+      const wifiFlyout = document.getElementById('wifi-flyout');
+      if(wifiFlyout) wifiFlyout.classList.add('hidden');
+      
+      openAppsFlyout.classList.toggle('hidden');
+      trayArrow.style.transform = openAppsFlyout.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+      
+      if (!openAppsFlyout.classList.contains('hidden')) {
+         openAppsList.innerHTML = '';
+         Object.keys(openWindows).forEach(appId => {
+            const app = apps[appId];
+            openAppsList.innerHTML += `
+               <div class="open-app-item">
+                  <img src="${app.icon}">
+                  <span style="flex:1;">${app.title}</span>
+                  <button class="pin-btn" data-appid="${appId}" style="background:var(--theme-hover); color:var(--theme-text); border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">
+                     ${app.pinned ? 'Unpin' : 'Pin'}
+                  </button>
+               </div>
+            `;
+         });
+      }
+   });
+}
+if (trayAudio) {
+   trayAudio.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openAppsFlyout.classList.add('hidden');
+      if (trayArrow) trayArrow.style.transform = 'rotate(0deg)';
+      const wifiFlyout = document.getElementById('wifi-flyout');
+      if(wifiFlyout) wifiFlyout.classList.add('hidden');
+      quickSettingsFlyout.classList.toggle('hidden');
+   });
+}
+
+const trayWifi = document.getElementById('tray-wifi');
+if (trayWifi) {
+   trayWifi.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openAppsFlyout.classList.add('hidden');
+      if (trayArrow) trayArrow.style.transform = 'rotate(0deg)';
+      quickSettingsFlyout.classList.add('hidden');
+      const wifiFlyout = document.getElementById('wifi-flyout');
+      if(wifiFlyout) wifiFlyout.classList.toggle('hidden');
+   });
+}
+
+document.addEventListener('click', (e) => {
+   if (openAppsFlyout && !e.target.closest('#open-apps-flyout') && !e.target.closest('#tray-arrow')) {
+      openAppsFlyout.classList.add('hidden');
+      if (trayArrow) trayArrow.style.transform = 'rotate(0deg)';
+   }
+   if (quickSettingsFlyout && !e.target.closest('#quick-settings-flyout') && !e.target.closest('#tray-audio')) {
+      quickSettingsFlyout.classList.add('hidden');
+   }
+   const wifiFlyout = document.getElementById('wifi-flyout');
+   if (wifiFlyout && !e.target.closest('#wifi-flyout') && !e.target.closest('#tray-wifi')) {
+      wifiFlyout.classList.add('hidden');
+   }
+   
+   // Handle Pin/Unpin from flyouts or task manager
+   if (e.target.closest('.pin-btn')) {
+      const btn = e.target.closest('.pin-btn');
+      const appId = btn.dataset.appid;
+      if (apps[appId]) {
+         apps[appId].pinned = !apps[appId].pinned;
+         renderTaskbar();
+         renderStartMenu();
+         btn.innerText = apps[appId].pinned ? 'Unpin' : 'Pin';
+      }
+   }
+   
+   // Microsoft Store Navigation
+   if (e.target.closest('.store-nav-item')) {
+      const navItem = e.target.closest('.store-nav-item');
+      const targetId = navItem.dataset.target;
+      if (targetId) {
+         const storeSidebar = navItem.closest('.store-sidebar');
+         if (storeSidebar) {
+             storeSidebar.querySelectorAll('.store-nav-item').forEach(el => el.classList.remove('active'));
+             navItem.classList.add('active');
+         }
+         const storeContent = navItem.closest('.store-app').querySelector('.store-content');
+         if (storeContent) {
+             storeContent.querySelectorAll('.store-page').forEach(page => page.style.display = 'none');
+             const targetPage = storeContent.querySelector('#' + targetId);
+             if (targetPage) targetPage.style.display = 'block';
+         }
+      }
+   }
+   
+   // Task Manager Processes Tab
+   if (e.target.closest('.tm-sidebar-icon[title="Processes"]')) {
+      document.querySelectorAll('.tm-sidebar-icon').forEach(el => el.classList.remove('active'));
+      e.target.closest('.tm-sidebar-icon').classList.add('active');
+      const tmContent = document.getElementById('tm-perf-view');
+      if (tmContent) {
+         let html = '<div style="padding:20px; width:100%;"><h2 style="font-size:24px; font-weight:500; margin-bottom:20px;">Running Processes</h2><div style="display:flex; flex-direction:column; gap:10px;">';
+         Object.keys(apps).forEach(appId => {
+            const app = apps[appId];
+            html += `
+               <div style="display:flex; align-items:center; justify-content:space-between; padding:10px; background:var(--theme-hover); border-radius:8px;">
+                  <div style="display:flex; align-items:center; gap:12px;">
+                     <img src="${app.icon}" style="width:24px;">
+                     <span style="font-weight:500;">${app.title}</span>
+                  </div>
+                  <div>
+                     <span style="font-size:12px; opacity:0.7; margin-right:15px;">${openWindows[appId] ? 'Running' : 'Stopped'}</span>
+                     <button class="pin-btn" data-appid="${appId}" style="background:var(--accent); color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">
+                        ${app.pinned ? 'Unpin from Taskbar' : 'Pin to Taskbar'}
+                     </button>
+                  </div>
+               </div>
+            `;
+         });
+         html += '</div></div>';
+         tmContent.innerHTML = html;
+         tmContent.style.flexDirection = 'column';
+      }
+   }
+   
+   // Restore Performance Tab
+   if (e.target.closest('.tm-sidebar-icon[title="Performance"]')) {
+      // Restore perfectly without re-rendering by triggering a re-render of taskmanager window
+      const win = document.getElementById('window-taskmanager');
+      if (win) {
+         closeApp('taskmanager');
+         setTimeout(() => openApp('taskmanager'), 250);
+      }
+   }
+});
+
+const volSlider = document.getElementById('volume-slider');
+const volVal = document.getElementById('volume-val');
+if(volSlider) {
+   volSlider.addEventListener('input', (e) => {
+      volVal.innerText = e.target.value;
+   });
+}
+
+const brightSlider = document.getElementById('brightness-slider');
+const brightVal = document.getElementById('brightness-val');
+if(brightSlider) {
+   brightSlider.addEventListener('input', (e) => {
+      brightVal.innerText = e.target.value;
+      const overlay = document.getElementById('brightness-overlay') || (() => {
+         const div = document.createElement('div');
+         div.id = 'brightness-overlay';
+         div.style.position = 'fixed';
+         div.style.top = '0'; div.style.left = '0'; div.style.width = '100vw'; div.style.height = '100vh';
+         div.style.pointerEvents = 'none'; div.style.zIndex = '999999';
+         document.body.appendChild(div);
+         return div;
+      })();
+      const opacity = 1 - (e.target.value / 100);
+      overlay.style.backgroundColor = `rgba(0,0,0,${opacity * 0.35})`;
+   });
+}

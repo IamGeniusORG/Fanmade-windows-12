@@ -62,9 +62,9 @@
       <!-- Taskbar -->
       <div class="taskbar">
         <div class="taskbar-left">
-          <div class="weather-widget">
+          <div class="weather-widget" title="[add your info here]">
             <i class="fa-solid fa-cloud-sun" style="color:#ffb800; font-size:16px;"></i>
-            <span>72°F Sunny</span>
+            <span>34°C [add your info here]</span>
           </div>
         </div>
 
@@ -82,16 +82,45 @@
         </div>
 
         <div class="taskbar-right">
-          <div class="system-tray">
-            <i class="fa-solid fa-chevron-up tray-icon" title="Show hidden icons"></i>
-            <i class="fa-solid fa-wifi tray-icon" title="Internet access"></i>
-            <i class="fa-solid fa-volume-high tray-icon" title="Speakers"></i>
-            <i class="fa-solid fa-battery-full tray-icon" title="Battery"></i>
+          <div class="system-tray" id="system-tray">
+            <div id="tray-arrow" class="tray-icon" title="Show open apps" style="display:flex; align-items:center; justify-content:center; width:24px; transition: transform 0.2s;"><i class="fa-solid fa-chevron-up"></i></div>
+            <div id="tray-wifi" class="tray-icon" title="AI Model Status" style="display:flex; align-items:center; justify-content:center; width:24px;"><i class="fa-solid fa-wifi"></i></div>
+            <div id="tray-audio" class="tray-icon" title="Volume & Brightness" style="display:flex; align-items:center; justify-content:center; width:24px;"><i class="fa-solid fa-volume-high"></i></div>
+            <div id="tray-battery" class="tray-icon" title="Battery" style="display:flex; align-items:center; justify-content:center; gap:4px; padding:0 5px;"><i class="fa-solid fa-battery-full" id="battery-icon"></i> <span id="battery-text" style="font-size:10px;">100%</span></div>
           </div>
           <div class="datetime">
             <div id="time" class="time">10:00 AM</div>
             <div id="date" class="date">10/24/2023</div>
           </div>
+        </div>
+      </div>
+
+      <!-- Quick Settings Flyout -->
+      <div id="quick-settings-flyout" class="flyout hidden">
+        <div class="flyout-section">
+          <i class="fa-solid fa-volume-high"></i>
+          <input type="range" id="volume-slider" min="0" max="100" value="50">
+          <span id="volume-val">50</span>
+        </div>
+        <div class="flyout-section">
+          <i class="fa-solid fa-sun"></i>
+          <input type="range" id="brightness-slider" min="10" max="100" value="100">
+          <span id="brightness-val">100</span>
+        </div>
+      </div>
+
+      <!-- Open Apps Flyout -->
+      <div id="open-apps-flyout" class="flyout hidden">
+        <div class="flyout-header">Open Apps</div>
+        <div id="open-apps-list"></div>
+      </div>
+
+      <!-- Wifi Flyout -->
+      <div id="wifi-flyout" class="flyout hidden">
+        <div class="flyout-header">AI Model Status</div>
+        <div style="font-size: 13px; margin-top: 10px; display:flex; align-items:center;">
+           <i class="fa-solid fa-wifi" style="margin-right: 10px; font-size:16px;"></i>
+           <span>Llama 3 8B</span>
         </div>
       </div>
     </main>
