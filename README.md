@@ -2,10 +2,11 @@
 
 Welcome to the Fanmade Windows 12 simulation! This project features a beautiful Windows 12-inspired web desktop environment powered by standard web technologies (HTML/CSS/JS) running on Vite. It includes interactive apps like Task Manager (which automatically detects your real system hardware), File Explorer, Notepad, and a built-in **Ollama Personal AI Assistant** running completely locally.
 
-## Preview Video
+## 🚀 Latest Updates & Preview Video
 
-You can download and watch the full Windows 12 simulation testing video here:
-📥 **[Download/View Windows 12 Testing Final Video](https://github.com/IamGeniusORG/Fanmade-windows-12/raw/main/Testing/Windows%2012%20testing%20final.mp4)**
+Check out the newest features in action! This video showcases the recently designed Microsoft Store with its new Library section, the fully functional System Tray, the real-time weather widget, and the completely overhauled multi-app UI.
+
+📥 **[Download & Watch the Windows 12 Update Preview Video (.mp4)](https://github.com/IamGeniusORG/Fanmade-windows-12/raw/main/Testing/Windows%2012%20testing%20final.mp4)**
 
 ## Features
 
