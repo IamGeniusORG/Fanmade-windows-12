@@ -1,5 +1,9 @@
 # Fanmade Windows 12 with Personal AI Assistant
 
+<div align="center">
+  <video src="Testing/Windows%2012%20testing%20final.mp4" autoplay loop muted playsinline width="100%"></video>
+</div>
+
 Welcome to the Fanmade Windows 12 simulation! This project features a beautiful Windows 12-inspired web desktop environment powered by standard web technologies (HTML/CSS/JS) running on Vite. It includes interactive apps like Task Manager (which automatically detects your real system hardware), File Explorer, Notepad, and a built-in **Ollama Personal AI Assistant** running completely locally.
 
 ## Features
