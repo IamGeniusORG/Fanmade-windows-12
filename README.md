@@ -12,6 +12,12 @@ Check out the massive new upgrades to the OS architecture:
 - **Context-Aware OS AI Commands**: J.A.R.V.I.S. can now parse natural language and actively manipulate your OS—ask him to open apps, toggle Dark Mode, or change your desktop wallpaper, and he will execute the command!
 - **Hardware-Accelerated Fluid Animations**: Re-engineered the window manager with dynamic `transform-origin` calculations so windows smoothly scale down directly into their taskbar icons when minimized, alongside bouncy open/close scale animations.
 - **Dynamic Z-Index Stacking**: Click or interact with any window, and it immediately snaps to the absolute front of the UI stack, mimicking true desktop multitasking.
+- **Persistent Virtual File System (VFS)**: Creates, saves, and retains documents as a JSON tree structure in `localStorage` across page reloads.
+- **Native File System Access**: Integrates modern Web APIs (`showOpenFilePicker`) allowing you to natively import and export `.txt` files directly between your real computer and the web OS.
+- **Live Resource Monitoring**: The Task Manager is now wired to your browser's real performance metrics, generating accurate memory charts via `performance.memory` and CPU load simulations via frame-drop tracking.
+- **"Mica" Glassmorphism UI Polish**: A gorgeous, authentic Windows 12 aesthetic using a calculated mix of `backdrop-filter: blur(25px)` and alpha channels allowing desktop wallpaper colors to dynamically bleed through the UI.
+- **Global Keyboard Shortcuts**: Control the system natively using your keyboard: `Alt + F4` (closes active window), `Ctrl + S` (saves active Notepad file), and `Meta` (toggles the Start Menu).
+- **Live Taskbar Hover Previews**: Integrated a microscopic DOM-cloning engine that silently generates live, scaled-down snapshots of your open apps when you hover over them on the taskbar!
 
 ## Features
 
