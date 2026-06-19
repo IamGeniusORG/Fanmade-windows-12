@@ -244,16 +244,26 @@ body {
   pointer-events: auto;
   overflow: hidden;
   color: var(--theme-text);
-  transform: translate3d(0, 10px, 0) scale(0.97);
+  transform: scale(0.8);
   opacity: 0;
   backface-visibility: hidden;
-  will-change: transform, opacity;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, width 0.2s, height 0.2s;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-origin: center center;
 }
 
-.app-window.open {
-  transform: translate3d(0, 0, 0) scale(1);
+.app-window.window-open {
+  transform: scale(1);
   opacity: 1;
+}
+
+.app-window.window-minimize {
+  transform: scale(0.5);
+  opacity: 0;
+}
+
+.app-window.window-close {
+  transform: scale(0.8);
+  opacity: 0;
 }
 
 .app-window.maximized {

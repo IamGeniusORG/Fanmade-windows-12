@@ -38,6 +38,7 @@ else if (hwCores >= 4) cpuName = 'Intel(R) Core(TM) i5-8300H / AMD Ryzen 3 3300X
 // Extremely robust & accurate icons from Icons8 Fluency / Color
 const ICON_EXPLORER = 'https://img.icons8.com/fluency/48/folder-invoices--v1.png';
 const ICON_EDGE = 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg';
+const ICON_JARVIS = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#0a0e17" stroke="#00e5ff" stroke-width="4"/><circle cx="50" cy="50" r="35" fill="none" stroke="#00e5ff" stroke-width="1" stroke-dasharray="8 4"/><text x="50" y="58" font-family="Courier New, monospace" font-size="28" fill="#00e5ff" text-anchor="middle" font-weight="bold">J</text></svg>');
 const ICON_STORE = 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Microsoft_Store_Icon_on_Windows_11.svg';
 const ICON_NOTEPAD = 'https://img.icons8.com/color/48/notepad.png';
 const ICON_PHOTOS = 'https://img.icons8.com/color/48/gallery.png';
@@ -96,31 +97,28 @@ const apps = {
     `
   },
   browser: {
-    title: 'AI Assistant',
-    icon: ICON_EDGE,
+    title: 'J.A.R.V.I.S.',
+    icon: ICON_JARVIS,
     pinned: true, taskbar: true, desktop: true,
     render: () => `
-      <div style="display:flex; flex-direction:column; height:100%; background:var(--theme-bg); font-family: 'Inter', sans-serif;">
-         <div style="padding:20px; display:flex; align-items:center; gap:15px; border-bottom:1px solid var(--theme-border); background:var(--theme-bg-hover);">
-            <img src="${ICON_EDGE}" style="width:32px; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
+      <div style="display:flex; flex-direction:column; height:100%; background:#0a0e17; font-family: 'Courier New', monospace; color:#00e5ff;">
+         <div style="padding:20px; display:flex; align-items:center; gap:15px; border-bottom:1px solid rgba(0, 229, 255, 0.2); background:rgba(0, 229, 255, 0.05);">
+            <div style="font-size:24px; font-weight:bold; letter-spacing:4px; text-shadow: 0 0 10px rgba(0,229,255,0.5);">J.A.R.V.I.S.</div>
             <div>
-               <h2 style="font-size:18px; margin:0; font-weight:600;">AI Assistant</h2>
-               <p style="margin:0; font-size:12px; opacity:0.6;">Running locally on your hardware</p>
+               <p style="margin:0; font-size:12px; opacity:0.8; letter-spacing:1px;">Just A Rather Very Intelligent System</p>
             </div>
          </div>
-         <div id="edge-chat-container" style="flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:20px;">
+         <div id="edge-chat-container" style="flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:20px; text-shadow: 0 0 5px rgba(0,229,255,0.3);">
             <div style="text-align:center; margin-top:10vh; opacity:0.8;">
-               <img src="${ICON_EDGE}" style="width:80px; margin-bottom:15px; opacity:0.9;">
-               <h1 style="font-size:24px; font-weight:500; margin-bottom:10px;">How can I help you today?</h1>
-               <p style="font-size:14px;">I'm your personal AI Assistant, powered by advanced AI models.</p>
+               <h1 style="font-size:36px; font-weight:bold; letter-spacing:8px; margin-bottom:10px; text-shadow: 0 0 20px rgba(0,229,255,0.8);">J.A.R.V.I.S.</h1>
+               <p style="font-size:14px; letter-spacing:2px; opacity:0.8;">ONLINE AND READY, SIR.</p>
             </div>
          </div>
-         <div style="padding:15px 20px; background:var(--theme-bg); border-top:1px solid var(--theme-border);">
-            <div style="display:flex; gap:10px; background:var(--theme-bg-hover); padding:5px 5px 5px 15px; border-radius:24px; border:1px solid var(--theme-border); align-items:center;">
-               <input type="text" id="edge-prompt-input" placeholder="Message AI..." style="flex:1; background:transparent; border:none; color:var(--theme-text); outline:none; font-size:14px;">
-               <button id="edge-send-btn" style="background:var(--accent); color:#fff; border:none; width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s;"><i class="fa-solid fa-arrow-up"></i></button>
+         <div style="padding:15px 20px; background:#0a0e17; border-top:1px solid rgba(0,229,255,0.2);">
+            <div style="display:flex; gap:10px; background:rgba(0,229,255,0.05); padding:5px 5px 5px 15px; border-radius:4px; border:1px solid rgba(0,229,255,0.3); align-items:center; box-shadow: inset 0 0 10px rgba(0,229,255,0.1);">
+               <input type="text" id="edge-prompt-input" placeholder="Awaiting command..." style="flex:1; background:transparent; border:none; color:#00e5ff; outline:none; font-size:14px; font-family:'Courier New', monospace; letter-spacing:1px;">
+               <button id="edge-send-btn" style="background:rgba(0,229,255,0.2); color:#00e5ff; border:1px solid rgba(0,229,255,0.5); width:40px; height:40px; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s;"><i class="fa-solid fa-terminal"></i></button>
             </div>
-            <div style="text-align:center; font-size:11px; opacity:0.5; margin-top:8px;">AI generated content may be inaccurate</div>
          </div>
       </div>
     `
@@ -683,9 +681,7 @@ document.addEventListener('click', (e) => {
           if(openWindows[appId].minimized) {
               restoreWindow(appId);
           } else if (openWindows[appId].el.style.zIndex == zIndexCounter) {
-              openWindows[appId].el.classList.remove('open');
-              openWindows[appId].minimized = true;
-              updateTaskbarState();
+              minimizeWindow(appId);
           } else {
               bringToFront(appId);
           }
@@ -1020,7 +1016,7 @@ function openApp(appId) {
   bringToFront(appId);
   updateTaskbarState();
   setTimeout(() => {
-     win.classList.add('open');
+     win.classList.add('window-open');
      if (appId === 'taskmanager') startTaskManager();
   }, 10);
   setupWindowEvents(appId, win);
@@ -1030,6 +1026,45 @@ function bringToFront(appId) {
   const win = openWindows[appId].el;
   zIndexCounter++;
   win.style.zIndex = zIndexCounter;
+}
+
+function minimizeWindow(appId) {
+    const win = openWindows[appId].el;
+    const taskbarIcon = document.querySelector(`.taskbar-icon[data-app="${appId}"]`);
+    if (taskbarIcon) {
+        const rect = taskbarIcon.getBoundingClientRect();
+        const winRect = win.getBoundingClientRect();
+        const originX = rect.left + rect.width / 2 - winRect.left;
+        const originY = rect.top + rect.height / 2 - winRect.top;
+        win.style.transformOrigin = `${originX}px ${originY}px`;
+    }
+    win.classList.remove('window-open');
+    win.classList.add('window-minimize');
+    openWindows[appId].minimized = true;
+    updateTaskbarState();
+}
+
+function restoreWindow(appId) {
+    const win = openWindows[appId].el;
+    win.style.transformOrigin = 'center center';
+    win.classList.remove('window-minimize');
+    win.classList.add('window-open');
+    openWindows[appId].minimized = false;
+    bringToFront(appId);
+    updateTaskbarState();
+}
+
+function closeAppWindow(appId) {
+    const win = openWindows[appId].el;
+    win.style.transformOrigin = 'center center';
+    win.classList.remove('window-open', 'window-minimize');
+    win.classList.add('window-close');
+    if (appId === 'taskmanager') stopTaskManager();
+    setTimeout(() => {
+      win.remove();
+      delete openWindows[appId];
+      updateTaskbarState();
+    }, 250);
 }
 
 function setupWindowEvents(appId, win) {
@@ -1042,18 +1077,14 @@ function setupWindowEvents(appId, win) {
 
   closeBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    win.classList.remove('open');
-    if (appId === 'taskmanager') stopTaskManager();
-    setTimeout(() => {
-      win.remove();
-      delete openWindows[appId];
-      updateTaskbarState();
-    }, 200);
+    closeAppWindow(appId);
   });
 
   maxBtn.addEventListener('click', (e) => {
     e.stopPropagation();
+    win.style.transition = 'all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)';
     win.classList.toggle('maximized');
+    setTimeout(() => { win.style.transition = ''; }, 250);
     // If it's task manager, re-calc canvas size in a tick
     if (appId === 'taskmanager') {
       setTimeout(() => {
@@ -1068,64 +1099,300 @@ function setupWindowEvents(appId, win) {
 
   minBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    win.classList.remove('open');
-    openWindows[appId].minimized = true;
-    updateTaskbarState();
+    minimizeWindow(appId);
   });
 
-  // Dragging with Bounds checking
+  // Dragging and Snapping Logic
   let isDragging = false;
   let startX, startY, initialLeft, initialTop;
+  let currentSnapZone = 'none';
 
-  header.addEventListener('mousedown', (e) => {
-    if (win.classList.contains('maximized')) return;
-    if (e.target.closest('.window-controls')) return;
-    isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    initialLeft = parseInt(window.getComputedStyle(win).left, 10);
-    initialTop = parseInt(window.getComputedStyle(win).top, 10);
-    bringToFront(appId);
-  });
+  function getPreviewUI() {
+    let preview = document.getElementById('snap-preview');
+    if (!preview) {
+      preview = document.createElement('div');
+      preview.id = 'snap-preview';
+      preview.style.position = 'absolute';
+      preview.style.background = 'rgba(0, 120, 215, 0.2)';
+      preview.style.border = '1px solid rgba(0, 120, 215, 0.4)';
+      preview.style.backdropFilter = 'blur(12px)';
+      preview.style.borderRadius = '12px';
+      preview.style.pointerEvents = 'none';
+      preview.style.zIndex = '999999';
+      preview.style.transition = 'all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      preview.style.opacity = '0';
+      preview.style.transform = 'scale(0.98)';
+      document.body.appendChild(preview);
+    }
+    return preview;
+  }
 
-  document.addEventListener('mousemove', (e) => {
+  const onMouseMove = (e) => {
     if (!isDragging) return;
     
     let newTop = initialTop + e.clientY - startY;
     let newLeft = initialLeft + e.clientX - startX;
     
-    // Bounds checking
     if (newTop < 0) newTop = 0;
     
+    win.style.transition = 'none';
     win.style.left = `${newLeft}px`;
     win.style.top = `${newTop}px`;
-  });
 
-  document.addEventListener('mouseup', () => { isDragging = false; });
-}
+    const preview = getPreviewUI();
+    const snapThreshold = 20;
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
 
-function restoreWindow(appId) {
-    const win = openWindows[appId].el;
-    win.classList.add('open');
-    openWindows[appId].minimized = false;
-    bringToFront(appId);
-    updateTaskbarState();
-}
+    if (e.clientX <= snapThreshold && e.clientY <= snapThreshold) {
+      currentSnapZone = 'top-left';
+      preview.style.opacity = '1';
+      preview.style.transform = 'scale(1)';
+      preview.style.top = '0px';
+      preview.style.left = '0px';
+      preview.style.width = '50%';
+      preview.style.height = '50%';
+      preview.style.borderRadius = '0 12px 12px 0';
+    } else if (e.clientX <= snapThreshold && e.clientY >= screenHeight - snapThreshold) {
+      currentSnapZone = 'bottom-left';
+      preview.style.opacity = '1';
+      preview.style.transform = 'scale(1)';
+      preview.style.top = '50%';
+      preview.style.left = '0px';
+      preview.style.width = '50%';
+      preview.style.height = '50%';
+      preview.style.borderRadius = '0 12px 0 0';
+    } else if (e.clientX >= screenWidth - snapThreshold && e.clientY <= snapThreshold) {
+      currentSnapZone = 'top-right';
+      preview.style.opacity = '1';
+      preview.style.transform = 'scale(1)';
+      preview.style.top = '0px';
+      preview.style.left = '50%';
+      preview.style.width = '50%';
+      preview.style.height = '50%';
+      preview.style.borderRadius = '12px 0 0 12px';
+    } else if (e.clientX >= screenWidth - snapThreshold && e.clientY >= screenHeight - snapThreshold) {
+      currentSnapZone = 'bottom-right';
+      preview.style.opacity = '1';
+      preview.style.transform = 'scale(1)';
+      preview.style.top = '50%';
+      preview.style.left = '50%';
+      preview.style.width = '50%';
+      preview.style.height = '50%';
+      preview.style.borderRadius = '12px 0 0 0';
+    } else if (e.clientX <= snapThreshold) {
+      currentSnapZone = 'left';
+      preview.style.opacity = '1';
+      preview.style.transform = 'scale(1)';
+      preview.style.top = '0px';
+      preview.style.left = '0px';
+      preview.style.width = '50%';
+      preview.style.height = '100%';
+      preview.style.borderRadius = '0 12px 12px 0';
+    } else if (e.clientX >= screenWidth - snapThreshold) {
+      currentSnapZone = 'right';
+      preview.style.opacity = '1';
+      preview.style.transform = 'scale(1)';
+      preview.style.top = '0px';
+      preview.style.left = '50%';
+      preview.style.width = '50%';
+      preview.style.height = '100%';
+      preview.style.borderRadius = '12px 0 0 12px';
+    } else if (e.clientY <= snapThreshold) {
+      currentSnapZone = 'top';
+      preview.style.opacity = '1';
+      preview.style.transform = 'scale(1)';
+      preview.style.top = '0px';
+      preview.style.left = '0px';
+      preview.style.width = '100%';
+      preview.style.height = '100%';
+      preview.style.borderRadius = '0';
+    } else {
+      currentSnapZone = 'none';
+      preview.style.opacity = '0';
+      preview.style.transform = 'scale(0.98)';
+    }
+  };
 
-// --- Edge Browser / Ollama Logic ---
-let ollamaModel = null;
-async function fetchOllamaModel() {
-   try {
-      const res = await fetch('http://localhost:11434/api/tags');
-      const data = await res.json();
-      if (data.models && data.models.length > 0) {
-         ollamaModel = data.models[0].name;
+  const onMouseUp = () => {
+    if (!isDragging) return;
+    isDragging = false;
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+
+    const preview = document.getElementById('snap-preview');
+    if (preview) {
+      preview.style.opacity = '0';
+      preview.style.transform = 'scale(0.98)';
+    }
+
+    if (currentSnapZone !== 'none') {
+      win.style.transition = 'all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      win.classList.remove('maximized');
+      win.style.borderRadius = '0';
+      
+      if (currentSnapZone === 'left') {
+        win.style.top = '0px';
+        win.style.left = '0px';
+        win.style.width = '50%';
+        win.style.height = '100%';
+      } else if (currentSnapZone === 'right') {
+        win.style.top = '0px';
+        win.style.left = '50%';
+        win.style.width = '50%';
+        win.style.height = '100%';
+      } else if (currentSnapZone === 'top-left') {
+        win.style.top = '0px';
+        win.style.left = '0px';
+        win.style.width = '50%';
+        win.style.height = '50%';
+      } else if (currentSnapZone === 'bottom-left') {
+        win.style.top = '50%';
+        win.style.left = '0px';
+        win.style.width = '50%';
+        win.style.height = '50%';
+      } else if (currentSnapZone === 'top-right') {
+        win.style.top = '0px';
+        win.style.left = '50%';
+        win.style.width = '50%';
+        win.style.height = '50%';
+      } else if (currentSnapZone === 'bottom-right') {
+        win.style.top = '50%';
+        win.style.left = '50%';
+        win.style.width = '50%';
+        win.style.height = '50%';
+      } else if (currentSnapZone === 'top') {
+        win.classList.add('maximized');
       }
-   } catch (e) {
-      console.warn('Ollama not running or models not found');
-   }
+      
+      setTimeout(() => {
+        win.style.transition = '';
+      }, 300);
+      currentSnapZone = 'none';
+    } else {
+      win.style.transition = '';
+    }
+  };
+
+  header.addEventListener('mousedown', (e) => {
+    if (win.classList.contains('maximized')) {
+      // If dragging a maximized window, restore it first.
+      // But only if we are dragging from the header and not from window controls.
+      if (e.target.closest('.window-controls')) return;
+      win.classList.remove('maximized');
+      // Set to a sensible default size if restoring
+      win.style.width = '800px';
+      win.style.height = '500px';
+      win.style.left = `${e.clientX - 400}px`;
+      win.style.top = `${e.clientY - 20}px`;
+    }
+    
+    if (e.target.closest('.window-controls')) return;
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    
+    // Un-snap if dragging a snapped window (has inline width)
+    if (win.style.width === '50%') {
+       win.style.width = '800px';
+       win.style.height = '500px';
+       // Re-adjust start position to avoid jumping
+       startX = e.clientX;
+       startY = e.clientY;
+       win.style.left = `${e.clientX - 400}px`;
+       win.style.top = `${e.clientY - 20}px`;
+    }
+
+    initialLeft = parseInt(window.getComputedStyle(win).left, 10) || 0;
+    initialTop = parseInt(window.getComputedStyle(win).top, 10) || 0;
+    bringToFront(appId);
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
 }
-fetchOllamaModel();
+
+
+// --- WebLLM Logic ---
+let engine = null;
+let enginePromise = null;
+const selectedModel = "Phi-3-mini-4k-instruct-q4f16_1-MLC";
+const chatHistory = [
+  {
+    role: "system",
+    content: `You are J.A.R.V.I.S., the highly intelligent, formal, and loyal AI assistant from Iron Man. 
+Address the user respectfully as "Sir" (or "Boss").
+CRITICAL RULE: DO NOT output any JSON unless the user EXPLICITLY asks you to open an app or change system settings. For normal chat, reply formally with text in your persona.
+
+ONLY if the user asks you to open an app, change background, or change theme, output a JSON block to trigger it.
+Format exactly like this:
+{"action": "open_app", "target": "appname"}
+Supported apps: notepad, explorer, store, settings, calculator, taskmanager, photos.
+For theme: {"action": "toggle_theme", "target": "dark"} or "light".
+For background: {"action": "change_bg", "target": "next"}
+
+DO NOT open notepad unless explicitly requested. Do not output JSON unless it is an explicit command. ALWAYS include a conversational text reply alongside the JSON (e.g., "Right away, Sir. I have opened the application.").`
+  }
+];
+
+async function initializeWebLLM() {
+   if (engine) return engine;
+   if (enginePromise) {
+       engine = await enginePromise;
+       return engine;
+   }
+   
+   enginePromise = (async () => {
+       const webllm = await import("https://esm.run/@mlc-ai/web-llm");
+       
+       const initProgressCallback = (initProgress) => {
+           const msgId = 'sys-loading';
+           const container = document.getElementById('edge-chat-container');
+           if (!container) return;
+           let el = document.getElementById(msgId);
+           if (!el) {
+               const welcome = container.querySelector('div[style*="text-align:center"]');
+               if (welcome) welcome.remove();
+
+               container.innerHTML += `
+             <div id="${msgId}" style="display:flex; gap:15px; margin-bottom:25px; max-width:800px; margin-left:auto; margin-right:auto; width:100%;">
+                <div style="width:36px; height:36px; border-radius:4px; background:rgba(0,229,255,0.2); border:1px solid rgba(0,229,255,0.5); color:#00e5ff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                   <i class="fa-solid fa-download"></i>
+                </div>
+                <div class="msg-content" style="flex:1; padding-top:8px; font-size:13px; opacity:0.8; font-family:'Courier New', monospace; color:#00e5ff;">
+                   Initializing Protocol...
+                </div>
+             </div>
+           `;
+               el = document.getElementById(msgId);
+           }
+           if (el) el.querySelector('.msg-content').textContent = initProgress.text;
+           if (container) container.scrollTop = container.scrollHeight;
+       };
+
+       try {
+           const eng = await webllm.CreateMLCEngine(selectedModel, { initProgressCallback });
+           const el = document.getElementById('sys-loading');
+           if (el) el.remove();
+           return eng;
+       } catch (e) {
+           console.error(e);
+           const el = document.getElementById('sys-loading');
+           if (el) el.querySelector('.msg-content').innerHTML = '<span style="color:#ff6b6b;">Failed to load WebLLM. Ensure you are using a Chromium browser with WebGPU enabled.</span>';
+           throw e;
+       }
+   })();
+
+   try {
+      engine = await enginePromise;
+   } catch(e) {
+      enginePromise = null; // allow retry
+   }
+   return engine;
+}
+
+// Pre-load the engine when possible
+setTimeout(initializeWebLLM, 2000);
 
 async function sendOllamaMessage(prompt) {
    const container = document.getElementById('edge-chat-container');
@@ -1136,10 +1403,10 @@ async function sendOllamaMessage(prompt) {
 
    container.innerHTML += `
       <div style="display:flex; gap:15px; margin-bottom:25px; max-width:800px; margin-left:auto; margin-right:auto; width:100%;">
-         <div style="width:36px; height:36px; border-radius:50%; background:var(--theme-bg-hover); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+         <div style="width:36px; height:36px; border-radius:4px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.3); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
             <i class="fa-solid fa-user"></i>
          </div>
-         <div style="flex:1; padding-top:8px; font-weight:500; word-break:break-word;">
+         <div style="flex:1; padding-top:8px; font-weight:bold; word-break:break-word; font-family:'Courier New', monospace; color:#fff;">
             ${prompt.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
          </div>
       </div>
@@ -1148,35 +1415,97 @@ async function sendOllamaMessage(prompt) {
    const msgId = 'msg-' + Date.now();
    container.innerHTML += `
       <div style="display:flex; gap:15px; margin-bottom:25px; max-width:800px; margin-left:auto; margin-right:auto; width:100%;">
-         <div style="width:36px; height:36px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-            <i class="fa-solid fa-sparkles"></i>
+         <div style="width:36px; height:36px; border-radius:4px; background:rgba(0,229,255,0.2); border:1px solid rgba(0,229,255,0.8); color:#00e5ff; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 0 10px rgba(0,229,255,0.5);">
+            <i class="fa-solid fa-microchip"></i>
          </div>
-         <div id="${msgId}" style="flex:1; padding-top:8px; word-break:break-word; line-height:1.6;">
-            <i class="fa-solid fa-circle-notch fa-spin"></i> Generating answers for you...
+         <div id="${msgId}" style="flex:1; padding-top:8px; word-break:break-word; line-height:1.6; font-family:'Courier New', monospace; color:#00e5ff; text-shadow:0 0 5px rgba(0,229,255,0.3);">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Processing...
          </div>
       </div>
    `;
    container.scrollTop = container.scrollHeight;
 
-   if (!ollamaModel) await fetchOllamaModel();
+   chatHistory.push({ role: "user", content: prompt });
+
+   if (!engine) await initializeWebLLM();
 
    try {
-      const response = await fetch('http://localhost:11434/api/generate', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({
-            model: ollamaModel || 'llama3',
-            prompt: prompt,
-            stream: false
-         })
-      });
-      if (!response.ok) throw new Error('Network response was not ok');
-      const data = await response.json();
-      document.getElementById(msgId).innerHTML = data.response.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+       const request = {
+           messages: chatHistory,
+           temperature: 0.7,
+           stream: true
+       };
+       
+       const asyncChunkGenerator = await engine.chat.completions.create(request);
+       const el = document.getElementById(msgId);
+       el.innerHTML = ''; 
+       let fullMessage = "";
+       
+       for await (const chunk of asyncChunkGenerator) {
+           const text = chunk.choices[0]?.delta?.content || "";
+           fullMessage += text;
+           // Hide JSON and markdown blocks while streaming
+           let displayMessage = fullMessage.replace(/```(?:json)?\s*\{"action"[\s\S]*?(?:\}\s*```|\}|$)/gi, '')
+                                           .replace(/\{"action"[\s\S]*?(?:\}|$)/gi, '')
+                                           .trim();
+           el.innerHTML = displayMessage.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+           container.scrollTop = container.scrollHeight;
+       }
+       chatHistory.push({ role: "assistant", content: fullMessage });
+
+       // JS Router: Parse JSON commands from the final output
+       const commandRegex = /\{"action"\s*:\s*"([^"]+)",\s*"target"\s*:\s*"([^"]+)"\}/g;
+       const matches = [...fullMessage.matchAll(commandRegex)];
+       
+       for (const match of matches) {
+           const action = match[1];
+           const target = match[2];
+           
+           if (action === "open_app" && apps[target]) {
+               if (!openWindows[target]) {
+                   openApp(target);
+               } else {
+                   restoreWindow(target);
+               }
+           } else if (action === "change_bg") {
+               const wallpapers = [
+                   'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564',
+                   'https://images.unsplash.com/photo-1506744626753-1fa44df14d28?q=80&w=2564',
+                   'https://images.unsplash.com/photo-1511300636408-a63a89df3482?q=80&w=2564',
+                   'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?q=80&w=2564',
+                   'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2564'
+               ];
+               currentWallpaper = wallpapers[Math.floor(Math.random() * wallpapers.length)];
+               const desktop = document.querySelector('.desktop');
+               if (desktop) desktop.style.backgroundImage = `url('${currentWallpaper}')`;
+           } else if (action === "toggle_theme") {
+               const toggle = document.getElementById('theme-toggle');
+               if (target === 'light' && currentTheme === 'dark') {
+                  currentTheme = 'light';
+                  document.body.classList.add('light-mode');
+                  if (toggle) toggle.classList.remove('on');
+               } else if (target === 'dark' && currentTheme === 'light') {
+                  currentTheme = 'dark';
+                  document.body.classList.remove('light-mode');
+                  if (toggle) toggle.classList.add('on');
+               }
+           }
+       }
+
+       // Hide the JSON string from the user UI
+       let cleanMessage = fullMessage.replace(/```(?:json)?\s*\{"action"[\s\S]*?(?:\}\s*```|\}|$)/gi, '')
+                                     .replace(/\{"action"[\s\S]*?(?:\}|$)/gi, '')
+                                     .trim();
+       
+       if (cleanMessage === "" && matches.length > 0) {
+           cleanMessage = "I have executed your command successfully.";
+       }
+       
+       el.innerHTML = cleanMessage.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
    } catch (err) {
-      document.getElementById(msgId).innerHTML = '<span style="color:#ff6b6b;"><i class="fa-solid fa-circle-exclamation"></i> Error connecting to local Ollama. Ensure it is running on port 11434 and CORS is allowed. Try running: <code>set OLLAMA_ORIGINS="*"</code> and restarting Ollama.</span>';
+       console.error(err);
+       document.getElementById(msgId).innerHTML = '<span style="color:#ff6b6b;"><i class="fa-solid fa-circle-exclamation"></i> Error running WebLLM. Ensure WebGPU is enabled.</span>';
    }
-   container.scrollTop = container.scrollHeight;
 }
 
 document.addEventListener('click', (e) => {
