@@ -47,7 +47,128 @@ const ICON_TERMINAL = 'https://img.icons8.com/color/48/console.png';
 const ICON_CALCULATOR = 'https://img.icons8.com/color/48/calculator--v1.png';
 const ICON_TASKMANAGER = 'https://img.icons8.com/fluency/48/task.png';
 
+// --- Global Systems: VFS, Native Files, Shortcuts, Frame Timing ---
+window.vfs = JSON.parse(localStorage.getItem('win12_vfs')) || {
+  "C:/Users/Admin/Documents": {
+    "welcome.txt": "Welcome to Windows 12!\nThis file is stored in your Persistent Virtual File System (localStorage)."
+  }
+};
 
+window.saveToVFS = () => {
+    const ta = document.getElementById('notepad-textarea');
+    if(!ta) return;
+    const content = ta.value;
+    const fileName = prompt("Enter file name to save in Documents:", "document.txt");
+    if (!fileName) return;
+    if (!window.vfs["C:/Users/Admin/Documents"]) window.vfs["C:/Users/Admin/Documents"] = {};
+    window.vfs["C:/Users/Admin/Documents"][fileName] = content;
+    localStorage.setItem('win12_vfs', JSON.stringify(window.vfs));
+    alert("Saved to Virtual File System!");
+    if (openWindows['explorer']) {
+       const explorerGrid = openWindows['explorer'].el.querySelector('#explorer-grid');
+       if (explorerGrid) explorerGrid.innerHTML = window.renderExplorerFiles();
+    }
+};
+
+window.importNativeFile = async () => {
+    try {
+        const [fileHandle] = await window.showOpenFilePicker({
+            types: [{ description: 'Text Files', accept: {'text/plain': ['.txt', '.md', '.json', '.js', '.html', '.css']} }]
+        });
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        const ta = document.getElementById('notepad-textarea');
+        if (ta) ta.value = content;
+    } catch (e) {
+        console.log("Import cancelled", e);
+    }
+};
+
+window.exportNativeFile = async () => {
+    try {
+        const ta = document.getElementById('notepad-textarea');
+        const content = ta ? ta.value : "";
+        const fileHandle = await window.showSaveFilePicker({
+            suggestedName: 'document.txt',
+            types: [{ description: 'Text Files', accept: {'text/plain': ['.txt']} }]
+        });
+        const writable = await fileHandle.createWritable();
+        await writable.write(content);
+        await writable.close();
+    } catch (e) {
+        console.log("Export cancelled", e);
+    }
+};
+
+window.renderExplorerFiles = () => {
+    let html = '';
+    const docs = window.vfs["C:/Users/Admin/Documents"] || {};
+    for (const [fileName, content] of Object.entries(docs)) {
+        html += `<div class="folder-item" onclick="openNotepadWithFile('${fileName}')"><i class="fa-solid fa-file-lines" style="font-size:32px; color:#00a4ef; margin-bottom:8px;"></i><span style="font-size:12px; text-align:center;">${fileName}</span></div>`;
+    }
+    return html;
+};
+
+window.openNotepadWithFile = (fileName) => {
+    const content = window.vfs["C:/Users/Admin/Documents"][fileName] || "";
+    if(!openWindows['notepad']) {
+        openApp('notepad');
+    } else {
+        restoreWindow('notepad');
+        bringToFront('notepad');
+    }
+    setTimeout(() => {
+        const ta = document.getElementById('notepad-textarea');
+        if (ta) ta.value = content;
+    }, 100);
+};
+
+// Global Keybinds
+window.addEventListener('keydown', (e) => {
+    // Alt + F4 Close Active Window
+    if (e.altKey && e.key === 'F4') {
+        e.preventDefault();
+        let maxZ = -1; let activeApp = null;
+        for (const [appId, appData] of Object.entries(openWindows)) {
+            const z = parseInt(appData.el.style.zIndex) || 0;
+            if (z > maxZ && !appData.minimized) { maxZ = z; activeApp = appId; }
+        }
+        if (activeApp) closeAppWindow(activeApp);
+    }
+    // Ctrl + S Save VFS (if notepad active)
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        let maxZ = -1; let activeApp = null;
+        for (const [appId, appData] of Object.entries(openWindows)) {
+            const z = parseInt(appData.el.style.zIndex) || 0;
+            if (z > maxZ && !appData.minimized) { maxZ = z; activeApp = appId; }
+        }
+        if (activeApp === 'notepad') window.saveToVFS();
+    }
+    // Meta/Windows key toggle Start Menu
+    if (e.key === 'Meta') {
+        e.preventDefault();
+        const startMenu = document.getElementById('start-menu');
+        if (startMenu.classList.contains('open')) {
+            startMenu.classList.remove('open');
+        } else {
+            startMenu.classList.add('open');
+            startMenu.style.zIndex = zIndexCounter++;
+        }
+    }
+});
+
+// Real FPS tracking for Task Manager
+let tmLastFrameTime = performance.now();
+let tmFrameDurations = [];
+function tmMeasureFrame() {
+  const now = performance.now();
+  tmFrameDurations.push(now - tmLastFrameTime);
+  if (tmFrameDurations.length > 60) tmFrameDurations.shift();
+  tmLastFrameTime = now;
+  requestAnimationFrame(tmMeasureFrame);
+}
+requestAnimationFrame(tmMeasureFrame);
 const apps = {
   explorer: {
     title: 'File Explorer',
@@ -87,9 +208,7 @@ const apps = {
           </div>
           <div class="explorer-main">
             <div class="folder-grid" id="explorer-grid">
-              <div class="folder-item"><img src="${ICON_EXPLORER}"><span>Projects</span></div>
-              <div class="folder-item"><img src="${ICON_EXPLORER}"><span>Work</span></div>
-              <div class="folder-item"><img src="${ICON_EXPLORER}"><span>Personal</span></div>
+              ${window.renderExplorerFiles()}
             </div>
           </div>
         </div>
@@ -254,11 +373,11 @@ const apps = {
     render: () => `
       <div style="height: 100%; display: flex; flex-direction: column; background: var(--theme-bg);">
         <div style="padding: 5px 10px; border-bottom: 1px solid var(--theme-border); font-size: 13px; display:flex; gap: 15px;">
-           <span style="cursor:pointer;">File</span>
-           <span style="cursor:pointer;">Edit</span>
-           <span style="cursor:pointer;">View</span>
+           <span style="cursor:pointer;" onclick="window.saveToVFS()">Save (VFS)</span>
+           <span style="cursor:pointer;" onclick="window.importNativeFile()">Import File</span>
+           <span style="cursor:pointer;" onclick="window.exportNativeFile()">Export File</span>
         </div>
-        <textarea style="flex:1; width:100%; border:none; resize:none; outline:none; padding:10px; background:transparent; color:var(--theme-text); font-family:Consolas, monospace; font-size:14px;" placeholder="Start typing here..."></textarea>
+        <textarea id="notepad-textarea" style="flex:1; width:100%; border:none; resize:none; outline:none; padding:10px; background:transparent; color:var(--theme-text); font-family:Consolas, monospace; font-size:14px;" placeholder="Start typing here..."></textarea>
       </div>
     `
   },
@@ -455,6 +574,27 @@ function initializeUI() {
       `;
     }
   });
+
+  // Taskbar Hover Previews
+  document.querySelectorAll('.taskbar-icon').forEach(icon => {
+      let preview = document.createElement('div');
+      preview.className = 'taskbar-preview';
+      preview.style.cssText = 'position:absolute; bottom:60px; left:50%; transform:translateX(-50%); width:200px; height:125px; background:rgba(20,20,20,0.9); border-radius:8px; border:1px solid rgba(255,255,255,0.1); display:none; align-items:center; justify-content:center; overflow:hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index:10000; pointer-events:none;';
+      icon.appendChild(preview);
+      
+      icon.addEventListener('mouseenter', async () => {
+          const appId = icon.getAttribute('data-app');
+          if (openWindows[appId] && !openWindows[appId].minimized && window.html2canvas) {
+              preview.style.display = 'flex';
+              const canvas = await html2canvas(openWindows[appId].el, { scale: 0.25, backgroundColor: null });
+              preview.innerHTML = '';
+              preview.appendChild(canvas);
+          }
+      });
+      icon.addEventListener('mouseleave', () => {
+          preview.style.display = 'none';
+      });
+  });
 }
 initializeUI();
 
@@ -592,19 +732,27 @@ function startTaskManager() {
   canvas.height = canvas.parentElement.clientHeight;
 
   tmInterval = setInterval(() => {
-     let lastVal = cpuData[cpuData.length - 1];
-     let nextVal = lastVal + (Math.random() * 20 - 10);
-     if(nextVal < 2) nextVal = 2 + Math.random() * 5;
-     if(nextVal > 100) nextVal = 95;
+     let avgFrame = tmFrameDurations.reduce((a,b)=>a+b,0) / Math.max(1, tmFrameDurations.length);
+     let cpuLoad = Math.min(100, Math.max(2, ((avgFrame - 16.6) / 16.6) * 100));
+     let nextVal = isNaN(cpuLoad) ? 5 : cpuLoad;
+     
+     let memLoadStr = "4.2";
+     if (performance.memory) {
+         let usedMB = performance.memory.usedJSHeapSize / (1024 * 1024);
+         memLoadStr = (usedMB / 10).toFixed(1); // Scale for aesthetic realism
+     }
+
      cpuData.shift();
      cpuData.push(nextVal);
 
      const utilEl = document.getElementById('tm-cpu-util');
      const subEl = document.getElementById('tm-cpu-sub');
      const speedEl = document.getElementById('tm-cpu-speed');
+     const memEl = document.getElementById('tm-mem-sub');
      if(utilEl) utilEl.textContent = Math.round(nextVal) + '%';
      if(subEl) subEl.textContent = Math.round(nextVal) + '% ' + (cpuName.length > 15 ? cpuName.substring(0,15) + '...' : cpuName);
      if(speedEl) speedEl.textContent = (2.5 + (nextVal/100)*2).toFixed(2) + ' GHz';
+     if(memEl) memEl.textContent = memLoadStr + '/' + hwMem + '.0 GB';
 
      ctx.clearRect(0, 0, canvas.width, canvas.height);
      
