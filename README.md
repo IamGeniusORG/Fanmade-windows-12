@@ -15,7 +15,7 @@ Check out the massive new upgrades to the OS architecture:
 - **Native File System Access**: Integrates modern Web APIs (`showOpenFilePicker`) allowing you to natively import and export `.txt` files directly between your real computer and the web OS.
 - **Dynamic Z-Index Stacking**: Click or interact with any window, and it immediately snaps to the absolute front of the UI stack, mimicking true desktop multitasking.
 - **Global Keyboard Shortcuts**: Control the system natively using your keyboard: `Alt + F4` (closes active window), `Ctrl + S` (saves active Notepad file), and `Meta` (toggles the Start Menu).
-- **Integrated Local AI Assistant**: Features a dedicated JARVIS-style AI app powered by `@mlc-ai/web-llm` running entirely locally via WebGPU. The AI can process natural language to execute OS commands (open apps, toggle themes, change wallpapers).
+- **J.A.R.V.I.S. AI Integration**: The OS now features a fully integrated, context-aware J.A.R.V.I.S. AI powered by `@mlc-ai/web-llm`. Running locally via WebGPU, J.A.R.V.I.S. can actively manipulate your environment—just ask him to open apps, change wallpapers, or toggle Dark Mode!
 
 ## Features
 
