@@ -968,8 +968,11 @@ body.light-mode .start-search input { background: #fff; border: 1px solid #ccc; 
 
 #open-apps-list {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  padding: 10px;
   max-height: 300px;
   overflow-y: auto;
 }

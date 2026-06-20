@@ -29,17 +29,27 @@ try {
 } catch (e) {}
 
 let cpuName = `Generic ${hwCores}-Core Processor`;
-if (hwCores >= 24) cpuName = 'Intel(R) Core(TM) i9-13900K / AMD Ryzen 9 7950X';
-else if (hwCores >= 16) cpuName = 'Intel(R) Core(TM) i7-13700K / AMD Ryzen 9 5950X';
-else if (hwCores >= 12) cpuName = 'Intel(R) Core(TM) i5-13450HX / AMD Ryzen 9 5900X';
-else if (hwCores >= 8) cpuName = 'Intel(R) Core(TM) i7-10750H / AMD Ryzen 7 5800X';
-else if (hwCores >= 4) cpuName = 'Intel(R) Core(TM) i5-8300H / AMD Ryzen 3 3300X';
+
+// Fetch exact real-world hardware from Vite backend plugin
+fetch('/api/hardware').then(res => res.json()).then(data => {
+    hwCores = data.cores;
+    hwMem = data.totalMem;
+    cpuName = data.cpuModel;
+    
+    // Update active TaskManager UI if already open
+    const cpuModelSub = document.getElementById('tm-cpu-model-sub');
+    if (cpuModelSub) cpuModelSub.textContent = cpuName;
+    const cpuCoresSub = document.getElementById('tm-cpu-cores-val');
+    if (cpuCoresSub) cpuCoresSub.textContent = hwCores;
+    const memSub = document.getElementById('tm-mem-sub');
+    if (memSub) memSub.textContent = `4.2/${hwMem}.0 GB`;
+}).catch(e => console.log('Using browser fallback hardware info.'));
 
 // Extremely robust & accurate icons from Icons8 Fluency / Color
 const ICON_EXPLORER = 'https://img.icons8.com/fluency/48/folder-invoices--v1.png';
 const ICON_EDGE = 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg';
-const ICON_JARVIS = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#0a0e17" stroke="#00e5ff" stroke-width="4"/><circle cx="50" cy="50" r="35" fill="none" stroke="#00e5ff" stroke-width="1" stroke-dasharray="8 4"/><text x="50" y="58" font-family="Courier New, monospace" font-size="28" fill="#00e5ff" text-anchor="middle" font-weight="bold">J</text></svg>');
-const ICON_STORE = 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Microsoft_Store_Icon_on_Windows_11.svg';
+const ICON_JARVIS = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#0a0e17" stroke="#00e5ff" stroke-width="4"/><circle cx="50" cy="50" r="35" fill="none" stroke="#00e5ff" stroke-width="1" stroke-dasharray="8 4"/><text x="50" y="58" font-family="Courier New, monospace" font-size="28" fill="#00e5ff" text-anchor="middle" font-weight="bold">J</text></svg>');
+const ICON_STORE = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB4PSIyMCIgeT0iMzAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcng9IjEwIiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNlMGUwZTAiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik0gMzUgMzAgQyAzNSAxNSwgNjUgMTUsIDY1IDMwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlMGUwZTAiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHJlY3QgeD0iMzUiIHk9IjUwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIGZpbGw9IiNGMjUwMjIiLz48cmVjdCB4PSI1MyIgeT0iNTAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgZmlsbD0iIzdGQkEwMCIvPjxyZWN0IHg9IjM1IiB5PSI2OCIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiBmaWxsPSIjMDBBNEVGIi8+PHJlY3QgeD0iNTMiIHk9IjY4IiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIGZpbGw9IiNGRkI5MDAiLz48L3N2Zz4=';
 const ICON_NOTEPAD = 'https://img.icons8.com/color/48/notepad.png';
 const ICON_PHOTOS = 'https://img.icons8.com/color/48/gallery.png';
 const ICON_SETTINGS = 'https://img.icons8.com/color/48/settings--v1.png';
@@ -473,7 +483,7 @@ const apps = {
             </div>
             <div class="tm-perf-main">
                <h2 style="font-size:24px; font-weight:500;">CPU</h2>
-               <p style="font-size:13px; opacity:0.8; margin-top:2px;">${cpuName}</p>
+               <p id="tm-cpu-model-sub" style="font-size:13px; opacity:0.8; margin-top:2px;">${cpuName}</p>
                <div style="font-size:12px; margin-top:15px; opacity:0.8;">% Utilization over 60 seconds</div>
                <div class="tm-graph-container">
                   <canvas id="tm-cpu-canvas" class="tm-graph-canvas"></canvas>
@@ -485,7 +495,7 @@ const apps = {
                   <div class="tm-info-box"><span class="tm-info-label">Threads</span><span class="tm-info-val" id="tm-cpu-threads">3120</span></div>
                   <div class="tm-info-box"><span class="tm-info-label">Handles</span><span class="tm-info-val">98124</span></div>
                   <div class="tm-info-box"><span class="tm-info-label">Up time</span><span class="tm-info-val" id="tm-cpu-uptime">0:01:24:15</span></div>
-                  <div class="tm-info-box"><span class="tm-info-label">Logical processors</span><span class="tm-info-val">${hwCores}</span></div>
+                  <div class="tm-info-box"><span class="tm-info-label">Logical processors</span><span class="tm-info-val" id="tm-cpu-cores-val">${hwCores}</span></div>
                </div>
             </div>
          </div>
@@ -819,6 +829,22 @@ document.addEventListener('click', (e) => {
      return; // stop execution
   }
 
+  // Reboot System
+  if (e.target.closest('.power-btn')) {
+     startMenu.classList.remove('open');
+     document.body.innerHTML = `
+        <div style="width:100vw; height:100vh; background:#000; display:flex; align-items:center; justify-content:center; flex-direction:column; color:#fff; font-family: 'Segoe UI', sans-serif;">
+           <div style="margin-bottom:20px; border:4px solid rgba(255,255,255,0.1); border-top-color:#00a4ef; border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite;"></div>
+           <div style="font-size: 20px;">Restarting...</div>
+           <style>@keyframes spin { 100% { transform:rotate(360deg); } }</style>
+        </div>
+     `;
+     setTimeout(() => {
+         window.location.reload();
+     }, 2000);
+     return;
+  }
+
   // App Launching
   const appBtn = e.target.closest('[data-app]');
   if (appBtn) {
@@ -1121,6 +1147,37 @@ function openApp(appId) {
   const appData = apps[appId];
   if (!appData) return;
 
+  let taskbarIcon = document.querySelector(`.taskbar-icon[data-app="${appId}"]`);
+  if (!taskbarIcon) {
+      const taskbarIconsContainer = document.getElementById('taskbar-icons');
+      if (taskbarIconsContainer) {
+          taskbarIcon = document.createElement('div');
+          taskbarIcon.className = 'taskbar-icon';
+          taskbarIcon.setAttribute('data-app', appId);
+          taskbarIcon.title = appData.title;
+          taskbarIcon.style.position = 'relative';
+          taskbarIcon.innerHTML = `<img src="${appData.icon}" alt="${appData.title}" onerror="this.src='https://img.icons8.com/color/48/mac-folder.png'">`;
+          taskbarIconsContainer.appendChild(taskbarIcon);
+          
+          let preview = document.createElement('div');
+          preview.className = 'taskbar-preview';
+          preview.style.cssText = 'position:absolute; bottom:60px; left:50%; transform:translateX(-50%); width:200px; height:125px; background:rgba(20,20,20,0.9); border-radius:8px; border:1px solid rgba(255,255,255,0.1); display:none; align-items:center; justify-content:center; overflow:hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index:10000; pointer-events:none;';
+          taskbarIcon.appendChild(preview);
+          
+          taskbarIcon.addEventListener('mouseenter', async () => {
+              if (openWindows[appId] && !openWindows[appId].minimized && window.html2canvas) {
+                  preview.style.display = 'flex';
+                  const canvas = await html2canvas(openWindows[appId].el, { scale: 0.25, backgroundColor: null });
+                  preview.innerHTML = '';
+                  preview.appendChild(canvas);
+              }
+          });
+          taskbarIcon.addEventListener('mouseleave', () => {
+              preview.style.display = 'none';
+          });
+      }
+  }
+
   const win = document.createElement('div');
   win.className = 'app-window';
   win.id = `window-${appId}`;
@@ -1211,6 +1268,11 @@ function closeAppWindow(appId) {
     setTimeout(() => {
       win.remove();
       delete openWindows[appId];
+      const appData = apps[appId];
+      if (appData && !appData.taskbar) {
+          const tbIcon = document.querySelector(`.taskbar-icon[data-app="${appId}"]`);
+          if (tbIcon) tbIcon.remove();
+      }
       updateTaskbarState();
     }, 250);
 }
@@ -1725,18 +1787,72 @@ if (trayArrow) {
       trayArrow.style.transform = openAppsFlyout.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
       
       if (!openAppsFlyout.classList.contains('hidden')) {
+         openAppsList.style.display = 'flex';
+         openAppsList.style.flexWrap = 'wrap';
+         openAppsList.style.gap = '15px';
+         openAppsList.style.padding = '10px';
+         openAppsList.style.justifyContent = 'center';
          openAppsList.innerHTML = '';
+         
          Object.keys(openWindows).forEach(appId => {
             const app = apps[appId];
-            openAppsList.innerHTML += `
-               <div class="open-app-item">
-                  <img src="${app.icon}">
-                  <span style="flex:1;">${app.title}</span>
-                  <button class="pin-btn" data-appid="${appId}" style="background:var(--theme-hover); color:var(--theme-text); border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">
-                     ${app.pinned ? 'Unpin' : 'Pin'}
-                  </button>
-               </div>
-            `;
+            const iconItem = document.createElement('div');
+            iconItem.style.position = 'relative';
+            iconItem.style.cursor = 'pointer';
+            iconItem.style.width = '36px';
+            iconItem.style.height = '36px';
+            iconItem.style.display = 'flex';
+            iconItem.style.alignItems = 'center';
+            iconItem.style.justifyContent = 'center';
+            iconItem.style.borderRadius = '8px';
+            iconItem.style.transition = 'background 0.2s';
+            iconItem.onmouseenter = () => iconItem.style.background = 'rgba(255,255,255,0.1)';
+            iconItem.onmouseleave = () => iconItem.style.background = 'transparent';
+            iconItem.title = `${app.title} (Right-click to End Task)`;
+            iconItem.innerHTML = `<img src="${app.icon}" style="width:28px; height:28px; pointer-events:none;">`;
+            
+            iconItem.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                document.querySelectorAll('.tray-context-menu').forEach(el => el.remove());
+                
+                const menu = document.createElement('div');
+                menu.className = 'tray-context-menu';
+                menu.style.cssText = `position:fixed; top: ${e.clientY - 45}px; left: ${e.clientX}px; background: rgba(30,30,30,0.85); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 5px; z-index: 100000; box-shadow: 0 4px 15px rgba(0,0,0,0.5);`;
+                
+                const endTaskBtn = document.createElement('div');
+                endTaskBtn.innerHTML = '<i class="fa-solid fa-power-off" style="margin-right:8px; color:#ff4d4d;"></i>End task';
+                endTaskBtn.style.cssText = `padding: 8px 16px; font-size: 13px; color: #fff; cursor: pointer; border-radius: 4px; display:flex; align-items:center;`;
+                endTaskBtn.onmouseenter = () => endTaskBtn.style.background = 'rgba(255,255,255,0.1)';
+                endTaskBtn.onmouseleave = () => endTaskBtn.style.background = 'transparent';
+                endTaskBtn.onclick = () => {
+                    closeAppWindow(appId);
+                    menu.remove();
+                    iconItem.remove();
+                };
+                
+                menu.appendChild(endTaskBtn);
+                document.body.appendChild(menu);
+                
+                const closeMenu = () => {
+                    menu.remove();
+                    document.removeEventListener('click', closeMenu);
+                    document.removeEventListener('contextmenu', closeMenu);
+                };
+                setTimeout(() => {
+                    document.addEventListener('click', closeMenu);
+                    document.addEventListener('contextmenu', closeMenu);
+                }, 10);
+            });
+            
+            iconItem.addEventListener('click', () => {
+                bringToFront(appId);
+                if (openWindows[appId].minimized) restoreWindow(appId);
+                openAppsFlyout.classList.add('hidden');
+                trayArrow.style.transform = 'rotate(0deg)';
+            });
+            
+            openAppsList.appendChild(iconItem);
          });
       }
    });
