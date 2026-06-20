@@ -44,6 +44,21 @@ npm run dev
 
 Open the provided localhost link (e.g., `http://localhost:5173`) in your web browser, and enjoy!
 
+### 3. Optional: Ollama Backend Setup
+If you prefer to run the J.A.R.V.I.S. AI using an external Ollama instance rather than the embedded WebLLM engine, you must launch Ollama with cross-origin (CORS) permissions enabled so the web OS can communicate with it:
+
+**Windows (PowerShell):**
+```powershell
+$env:OLLAMA_ORIGINS="*"
+ollama run llama3
+```
+
+**Mac/Linux (Terminal):**
+```bash
+OLLAMA_ORIGINS="*" ollama run llama3
+```
+*(Note: Replace `llama3` with your preferred model name if needed.)*
+
 ## Usage
 - Click the Start Menu or taskbar icons to launch apps and navigate the OS.
 - Right-click the desktop to open the system context menu.
