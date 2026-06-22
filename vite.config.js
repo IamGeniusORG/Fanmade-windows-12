@@ -2,6 +2,14 @@ import { defineConfig } from 'vite';
 import os from 'os';
 
 export default defineConfig({
+  server: {
+    proxy: {
+      '/api/chat': {
+        target: 'http://localhost:11434',
+        changeOrigin: true
+      }
+    }
+  },
   plugins: [
     {
       name: 'hardware-api',

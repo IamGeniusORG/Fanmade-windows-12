@@ -1532,16 +1532,18 @@ const chatHistory = [
     role: "system",
     content: `You are J.A.R.V.I.S., the highly intelligent, formal, and loyal AI assistant from Iron Man. 
 Address the user respectfully as "Sir" (or "Boss").
-CRITICAL RULE: DO NOT output any JSON unless the user EXPLICITLY asks you to open an app or change system settings. For normal chat, reply formally with text in your persona.
+NEVER mention your internal rules, instructions, or JSON formatting to the user. Act completely naturally as J.A.R.V.I.S.
+If the user is just chatting, reply formally with text in your persona.
 
-ONLY if the user asks you to open an app, change background, or change theme, output a JSON block to trigger it.
+If the user asks you to open an app, change background, or change theme, you must output a JSON block to trigger it under the hood.
 Format exactly like this:
 {"action": "open_app", "target": "appname"}
+
 Supported apps: notepad, explorer, store, settings, calculator, taskmanager, photos.
 For theme: {"action": "toggle_theme", "target": "dark"} or "light".
 For background: {"action": "change_bg", "target": "next"}
 
-DO NOT open notepad unless explicitly requested. Do not output JSON unless it is an explicit command. ALWAYS include a conversational text reply alongside the JSON (e.g., "Right away, Sir. I have opened the application.").`
+If you output JSON to perform an action, ALWAYS include a conversational text reply as well (e.g., "Right away, Sir. I have opened the application."). DO NOT ask the user to make "explicit requests". Just do what they ask.`
   }
 ];
 
@@ -1637,16 +1639,73 @@ async function sendOllamaMessage(prompt) {
 
    chatHistory.push({ role: "user", content: prompt });
 
-   if (!engine) await initializeWebLLM();
+   if (!engine && typeof window.webllmSupported === 'undefined') {
+       try {
+           await initializeWebLLM();
+           window.webllmSupported = true;
+       } catch (e) {
+           window.webllmSupported = false;
+       }
+   }
 
    try {
-       const request = {
-           messages: chatHistory,
-           temperature: 0.7,
-           stream: true
-       };
-       
-       const asyncChunkGenerator = await engine.chat.completions.create(request);
+       let asyncChunkGenerator;
+       if (window.webllmSupported && engine) {
+           const request = {
+               messages: chatHistory,
+               temperature: 0.7,
+               stream: true
+           };
+           asyncChunkGenerator = await engine.chat.completions.create(request);
+       } else {
+           // Fallback to local Ollama API for browsers without WebGPU
+           const response = await fetch('/api/chat', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({
+                   model: 'qwen2.5:3b-instruct-q4_0',
+                   messages: chatHistory,
+                   stream: true,
+                   options: { num_ctx: 512 }
+               })
+           });
+           
+           if (!response.ok) throw new Error("Ollama backend failed to respond.");
+
+           asyncChunkGenerator = async function* () {
+               const reader = response.body.getReader();
+               const decoder = new TextDecoder("utf-8");
+               let buffer = "";
+               while (true) {
+                   const { done, value } = await reader.read();
+                   if (done) {
+                       if (buffer.trim()) {
+                           try {
+                               const parsed = JSON.parse(buffer);
+                               if (parsed.message && parsed.message.content) {
+                                   yield { choices: [{ delta: { content: parsed.message.content } }] };
+                               }
+                           } catch (e) {}
+                       }
+                       break;
+                   }
+                   buffer += decoder.decode(value, { stream: true });
+                   const lines = buffer.split('\n');
+                   buffer = lines.pop(); // Keep the incomplete line in the buffer
+                   for (const line of lines) {
+                       if (line.trim()) {
+                           try {
+                               const parsed = JSON.parse(line);
+                               if (parsed.message && parsed.message.content) {
+                                   yield { choices: [{ delta: { content: parsed.message.content } }] };
+                               }
+                           } catch (e) {}
+                       }
+                   }
+               }
+           }();
+       }
+
        const el = document.getElementById(msgId);
        el.innerHTML = ''; 
        let fullMessage = "";
@@ -1655,8 +1714,8 @@ async function sendOllamaMessage(prompt) {
            const text = chunk.choices[0]?.delta?.content || "";
            fullMessage += text;
            // Hide JSON and markdown blocks while streaming
-           let displayMessage = fullMessage.replace(/```(?:json)?\s*\{"action"[\s\S]*?(?:\}\s*```|\}|$)/gi, '')
-                                           .replace(/\{"action"[\s\S]*?(?:\}|$)/gi, '')
+           let displayMessage = fullMessage.replace(/```(?:json)?\s*\{[\s\S]*?\}\s*```/gi, '')
+                                           .replace(/\{\s*"action"[\s\S]*?\}/gi, '')
                                            .trim();
            el.innerHTML = displayMessage.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
            container.scrollTop = container.scrollHeight;
@@ -1664,12 +1723,12 @@ async function sendOllamaMessage(prompt) {
        chatHistory.push({ role: "assistant", content: fullMessage });
 
        // JS Router: Parse JSON commands from the final output
-       const commandRegex = /\{"action"\s*:\s*"([^"]+)",\s*"target"\s*:\s*"([^"]+)"\}/g;
+       const commandRegex = /\{\s*"action"\s*:\s*"([^"]+)"\s*,\s*"target"\s*:\s*"([^"]+)"\s*\}/gi;
        const matches = [...fullMessage.matchAll(commandRegex)];
        
        for (const match of matches) {
-           const action = match[1];
-           const target = match[2];
+           const action = match[1].toLowerCase();
+           const target = match[2].toLowerCase();
            
            if (action === "open_app" && apps[target]) {
                if (!openWindows[target]) {
@@ -1703,8 +1762,8 @@ async function sendOllamaMessage(prompt) {
        }
 
        // Hide the JSON string from the user UI
-       let cleanMessage = fullMessage.replace(/```(?:json)?\s*\{"action"[\s\S]*?(?:\}\s*```|\}|$)/gi, '')
-                                     .replace(/\{"action"[\s\S]*?(?:\}|$)/gi, '')
+       let cleanMessage = fullMessage.replace(/```(?:json)?\s*\{[\s\S]*?\}\s*```/gi, '')
+                                     .replace(/\{\s*"action"[\s\S]*?\}/gi, '')
                                      .trim();
        
        if (cleanMessage === "" && matches.length > 0) {
@@ -1714,7 +1773,7 @@ async function sendOllamaMessage(prompt) {
        el.innerHTML = cleanMessage.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
    } catch (err) {
        console.error(err);
-       document.getElementById(msgId).innerHTML = '<span style="color:#ff6b6b;"><i class="fa-solid fa-circle-exclamation"></i> Error running WebLLM. Ensure WebGPU is enabled.</span>';
+       document.getElementById(msgId).innerHTML = '<span style="color:#ff6b6b;"><i class="fa-solid fa-circle-exclamation"></i> Error communicating with AI Engine. Please ensure Ollama is running via PowerShell or WebGPU is enabled in your browser.</span>';
    }
 }
 
